@@ -1,0 +1,61 @@
+{
+  "description": "Mẫu câu trả lời cuối mà `codex exec --output-schema` phải tuân theo khi góp ý thứ hai.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "verdict",
+    "answer",
+    "issues",
+    "confidence"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "agree",
+        "partly_agree",
+        "disagree",
+        "not_applicable"
+      ]
+    },
+    "answer": {
+      "type": "string"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "severity",
+          "point",
+          "suggestion"
+        ],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "point": {
+            "type": "string"
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    }
+  }
+}

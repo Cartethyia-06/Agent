@@ -1,0 +1,22 @@
+# Bí mật: không bao giờ commit API key
+.env
+.env.local
+
+# Kết quả chạy (ảnh, file bàn giao, bộ đếm lượt dùng)
+outputs/*
+!outputs/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Cài đặt Claude Code riêng từng máy
+.claude/settings.local.json
+
+# Hệ điều hành / editor
+.DS_Store
+Thumbs.db
+.vscode/

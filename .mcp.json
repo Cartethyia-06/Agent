@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "agent-hub": {
+      "command": "uv",
+      "args": ["run", "--quiet", "python", "-m", "tools.mcp_server"],
+      "timeout": 900000
+    }
+  }
+}

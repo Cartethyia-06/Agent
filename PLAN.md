@@ -2,7 +2,7 @@
 
 > **Ngày thống nhất:** 03/11/2026
 > **Người tham gia:** Minh và Claude
-> **Trạng thái:** ý tưởng đã chốt, chưa triển khai
+> **Trạng thái:** đã viết code MVP (03/11/2026), chờ chạy thử trên máy thật. Xem mục 12 và README.md
 
 ---
 
@@ -142,10 +142,10 @@ Các AI trao đổi bằng **JSON** theo một mẫu thống nhất, để Claud
 ## 9. Lộ trình làm thử (MVP)
 
 - [ ] **Bước 1:** Cài Claude Code và Codex CLI, đăng nhập ChatGPT Free, lấy API key Gemini ở Google AI Studio.
-- [ ] **Bước 2:** Viết script Python `gemini_search.py`: nhận câu hỏi, gọi Gemini có bật Google Search, in ra JSON `{answer, sources}`.
-- [ ] **Bước 3:** Viết script Python `gemini_image.py`: nhận prompt, lưu ảnh ra file.
-- [ ] **Bước 4:** Viết `CLAUDE.md` chứa luật phân việc (mục 3), quy trình (mục 5) và luật kiểm tra (mục 7).
-- [ ] **Bước 5:** Nối Codex vào Claude Code qua `codex mcp-server` hoặc plugin `codex-plugin-cc`.
+- [x] **Bước 2:** Viết script Python `gemini_search.py`: nhận câu hỏi, gọi Gemini có bật Google Search, in ra JSON `{answer, sources}`.
+- [x] **Bước 3:** Viết script Python `gemini_image.py`: nhận prompt, lưu ảnh ra file.
+- [x] **Bước 4:** Viết `CLAUDE.md` chứa luật phân việc (mục 3), quy trình (mục 5) và luật kiểm tra (mục 7).
+- [x] **Bước 5:** Nối Codex vào Claude Code qua `codex mcp-server` hoặc plugin `codex-plugin-cc`. *(Đổi cách: `codex mcp-server` đã bị gỡ, xem mục 12.)*
 - [ ] **Bước 6:** Chạy thử bằng việc thật, ví dụ: *"So sánh ESP32-S3 với STM32F411 cho robot Xiaozhi, có nguồn, kèm ảnh minh họa"*.
 
 ### Cấu trúc thư mục dự kiến
@@ -185,6 +185,33 @@ Agent/
 - Hạn mức Claude Code ở gói Pro: xem bằng lệnh `/status` trong Claude Code.
 
 Các con số hạn mức trong file này chủ yếu lấy từ blog và diễn đàn, chưa đối chiếu được với trang chính thức.
+
+---
+
+## 12. Cập nhật khi triển khai (03/11/2026)
+
+Khi viết code, Claude kiểm tra lại các giả định ở mục 2 và 10 bằng cách đọc mã nguồn SDK
+google-genai 2.34.0, chạy thử Codex CLI 0.166.0 và tra tài liệu. Kết quả:
+
+| Giả định | Thực tế | Đã đổi gì |
+|---|---|---|
+| Nối Codex qua `codex mcp-server` | Ngừng hỗ trợ 24/8/2026, gỡ từ Codex CLI 0.154.0 (PR openai/codex#42993) | `adapters/codex_review.py` gọi `codex exec --sandbox read-only --output-schema ...`; plugin `codex-plugin-cc` cho người dùng gõ tay. `.mcp.json` giờ khai báo MCP server riêng `agent-hub` |
+| Search grounding miễn phí khoảng 500 lượt/ngày | Đó là hạn mức của Gemini 2.5 Flash, đã tắt 16/10/2026. Gemini 3 trở lên: không có grounding ở tầng miễn phí; tầng trả phí có 5.000 lượt/tháng không mất tiền | Adapter thử nhiều model, báo lỗi rõ, dự phòng `agy_search` rồi WebSearch của Claude |
+| Tạo ảnh Gemini có hạn mức miễn phí | Trang giá 10/2026: tầng miễn phí không có | Dự phòng bán thủ công qua Gemini app (gói AI Pro) trước, ChatGPT web sau |
+| `agy -p` treo khi không có terminal | Vẫn còn (#318), thêm lỗi không in output (#76) | Đóng stdin, chạy trong pseudo-terminal, có giới hạn thời gian, dừng cả cây tiến trình |
+| Chưa biết | Gói Google AI Pro có quyền lợi Google Developer Program kèm credit Google Cloud hằng tháng dùng được cho Gemini API | README mục 4: bật billing bằng credit, đặt budget alert, giới hạn lượt/ngày trong `.env` |
+
+Thêm so với kế hoạch:
+
+- MCP server `agent-hub` (`tools/mcp_server.py`): Claude gọi adapter như tool, không phải gõ lệnh shell.
+- Luật mục 7 thành code: `tools/validate_result.py` (đủ nguồn, số liệu có 2 nguồn khác tên miền,
+  dấu hiệu prompt injection) và `tools/verify_quote.py` (mở trang hoặc PDF, đối chiếu trích dẫn,
+  chỉ trả về đoạn ngắn để tiết kiệm hạn mức Claude).
+- `tools/doctor.py --probe`: trả lời mục 11 bằng key thật của người dùng.
+- Subagent `researcher` (chạy Haiku cho rẻ), `coder`, `analyst`; skill `/orchestrate`.
+- Giới hạn lượt gọi API trả phí mỗi ngày, để vòng lặp lỗi không tiêu hết credit.
+
+Còn phải làm trên máy thật: bước 1 và bước 6 ở mục 9, cùng `uv run python -m tools.doctor --probe`.
 
 ---
 
