@@ -1,0 +1,25 @@
+[project]
+name = "agent-hub"
+version = "0.1.0"
+description = "Claude Code điều phối Gemini và ChatGPT (Codex) theo PLAN.md"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "google-genai>=2.34,<3",
+    "httpx>=0.28",
+    "mcp>=2.3,<3",
+    "pypdf>=5.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "jsonschema>=4.20",
+]
+
+[tool.uv]
+# Đây là một thư mục script, không cần đóng gói: `uv run` chỉ cài thư viện.
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

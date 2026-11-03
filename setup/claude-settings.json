@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "mcp__agent-hub__*",
+      "Bash(uv run python -m adapters.*)",
+      "Bash(uv run python -m tools.*)",
+      "Bash(uv run pytest *)",
+      "PowerShell(uv run python -m adapters.*)",
+      "PowerShell(uv run python -m tools.*)",
+      "PowerShell(uv run pytest *)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)"
+    ]
+  },
+  "enabledMcpjsonServers": ["agent-hub"],
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "codex@openai-codex": true
+  }
+}

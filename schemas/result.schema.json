@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Result (kết quả trả về)",
+  "description": "PLAN.md mục 6. Mọi adapter trả về ít nhất các trường bắt buộc dưới đây.",
+  "type": "object",
+  "required": ["task_id", "agent", "status", "answer", "sources"],
+  "properties": {
+    "task_id": { "type": "string", "minLength": 1 },
+    "agent": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "no_sources",
+        "quota_exceeded",
+        "auth_error",
+        "not_configured",
+        "unavailable",
+        "timeout",
+        "blocked",
+        "pending_user",
+        "error"
+      ]
+    },
+    "answer": { "type": "string" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "id": { "type": "integer" },
+          "url": { "type": "string" },
+          "title": { "type": "string" },
+          "quote": { "type": "string" },
+          "quote_verified": { "type": ["boolean", "null"] }
+        }
+      }
+    },
+    "error": { "type": "string" },
+    "hint": { "type": "string" }
+  }
+}

@@ -1,0 +1,9 @@
+# Dành cho người dùng pip (không dùng uv). Danh sách giống pyproject.toml.
+google-genai>=2.34,<3
+httpx>=0.28
+mcp>=2.3,<3
+pypdf>=5.0
+
+# Chỉ cần khi chạy test
+pytest>=8
+jsonschema>=4.20
