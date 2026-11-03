@@ -148,6 +148,11 @@ def classify_gemini_error(exc: BaseException) -> tuple[str, str]:
         short = message[:400]
         if "api key not valid" in low or "api_key_invalid" in low:
             return AUTH, f"API key không hợp lệ: {short}"
+        if "prepay" in low and any(w in low for w in ("deplet", "balance", "credit")):
+            return QUOTA, (
+                "Hết số dư trả trước (Prepay) của Gemini API: nạp thêm trong AI Studio > Billing. "
+                f"Chi tiết: {short}"
+            )
         if code == 429 or status == "RESOURCE_EXHAUSTED":
             if "limit: 0" in low:
                 return QUOTA, (

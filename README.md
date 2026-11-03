@@ -30,7 +30,7 @@ SDK, chạy thử CLI thật và tra tài liệu. Có 5 điểm khác:
 | Gemini API miễn phí có Search grounding, khoảng 500 lượt/ngày | Con số đó là của Gemini 2.5 Flash, model đã tắt ngày 16/10/2026. Với Gemini 3 trở lên, grounding không có ở tầng miễn phí; tầng trả phí được 5.000 lượt/tháng không mất tiền | Adapter thử lần lượt nhiều model, báo lỗi rõ ràng, có dự phòng agy và WebSearch. Mục 4 hướng dẫn bật billing bằng credit của gói AI Pro |
 | Tạo ảnh Nano Banana qua API có hạn mức miễn phí | Trang giá (10/2026) ghi tầng miễn phí: không có | Dự phòng bán thủ công: Gemini app (gói AI Pro) trước, ChatGPT web sau |
 | `agy -p` có lỗi treo | Vẫn còn: treo (#318) và không in gì khi không có terminal (#76) | Đóng stdin, chạy trong pseudo-terminal, giới hạn thời gian, dừng cả cây tiến trình |
-| (chưa có trong kế hoạch) | Gói Google AI Pro có quyền lợi Google Developer Program, kèm credit Google Cloud hằng tháng dùng được cho Gemini API (báo chí nêu khoảng 10 USD/tháng, cần xem trong dashboard) | Mục 4 |
+| (chưa có trong kế hoạch) | Gói Google AI Pro có 10 USD credit/tháng (Google Developer Program) dùng được cho Gemini API. Billing Gemini API trong AI Studio đã chuyển sang trả trước; credit chỉ kích hoạt sau khi nạp trả trước | Mục 4 |
 
 ## 1. Cần có
 
@@ -141,19 +141,30 @@ sách nguồn và phần "chưa kiểm chứng".
 Lệnh của plugin Codex để bạn gõ trực tiếp: `/codex:review`, `/codex:adversarial-review`,
 `/codex:rescue`, `/codex:status`, `/codex:result`.
 
-## 4. Bật Search grounding và tạo ảnh qua API (tùy chọn, có thể tốn tiền)
+## 4. Bật Search grounding và tạo ảnh qua API (tùy chọn, tốn tiền)
 
-Từ Gemini 3, Google Search grounding và tạo ảnh chỉ chạy khi project AI Studio đã bật billing.
-Gói Google AI Pro có credit Google Cloud hằng tháng để trả phần này:
+Từ Gemini 3, Google Search grounding và tạo ảnh không có ở tầng miễn phí. Muốn dùng qua API thì
+bật billing trong AI Studio. Billing của Gemini API giờ là **trả trước (Prepay)**:
 
-1. Mở dashboard của [Google Developer Program](https://developers.google.com/program), kích hoạt
-   quyền lợi premium đi kèm gói AI Pro, xem số credit thật mỗi tháng.
-2. Trong [AI Studio](https://aistudio.google.com), chọn project chứa API key, bật billing và chọn
-   billing account có credit đó.
-3. Trong Google Cloud Billing, tạo **budget alert** (ví dụ 5 USD/tháng) để được báo trước khi hết credit.
-4. Giữ giới hạn tự đặt trong `.env`: `GEMINI_SEARCH_DAILY_LIMIT=50`, `GEMINI_IMAGE_DAILY_LIMIT=5`.
-   Adapter sẽ từ chối gọi tiếp khi chạm giới hạn, để vòng lặp lỗi không tiêu hết credit.
-5. Kiểm tra lại:
+- Nạp tiền trước (tối thiểu khoảng 5-10 USD, các nguồn ghi khác nhau), dùng tới đâu trừ tới đó gần
+  như ngay lập tức.
+- Số dư về 0 thì mọi API key thuộc tài khoản billing đó ngừng chạy, không bị trừ thêm. Adapter sẽ
+  báo `quota_exceeded` và nhạc trưởng chuyển sang kênh dự phòng.
+- Tự nạp (auto-reload) là tùy chọn. Để **tắt** nếu không muốn bị trừ tiền tự động.
+- Tiền đã nạp không hoàn lại và hết hạn sau 12 tháng (theo nguồn bên thứ ba).
+
+Gói Google AI Pro có 10 USD credit mỗi tháng (quyền lợi Google Developer Program). Cách dùng:
+
+1. Mở dashboard [Google Developer Program](https://developers.google.com/program), kích hoạt quyền
+   lợi đi kèm gói AI Pro.
+2. Trong [AI Studio](https://aistudio.google.com), vào Billing, thiết lập Prepay và nạp mức tối
+   thiểu. Credit của gói chỉ được kích hoạt khi số dư trả trước lớn hơn 0.
+3. Từ đó credit được trừ trước, tiền bạn nạp trừ sau. Credit không đổi được thành số dư; credit cộng
+   dồn và hết hạn sau 12 tháng.
+4. Xem lại trang Billing đã nhận credit chưa: một số người báo vẫn thấy "No available credits".
+5. Giữ giới hạn tự đặt trong `.env`: `GEMINI_SEARCH_DAILY_LIMIT=50`, `GEMINI_IMAGE_DAILY_LIMIT=5`.
+   Adapter từ chối gọi tiếp khi chạm giới hạn, để vòng lặp lỗi không tiêu hết tiền.
+6. Kiểm tra lại:
 
    ```powershell
    uv run python -m tools.doctor --probe --image
@@ -244,6 +255,7 @@ MCP. Không test nào gọi API thật.
 | `/mcp` báo `agent-hub` failed | Chạy `uv sync`, rồi chạy thử `uv run python -m tools.mcp_server` để xem lỗi. Kiểm tra `uv` có trong PATH |
 | Không muốn dùng uv | Tạo venv bằng pip (`python -m venv .venv`, rồi `.venv\Scripts\pip install -r requirements.txt`) và khai báo server ở scope local (ghi đè bản trong `.mcp.json`), dùng đường dẫn đầy đủ: `claude mcp add agent-hub --scope local -- C:\duong\dan\Agent\.venv\Scripts\python.exe C:\duong\dan\Agent\tools\mcp_server.py` |
 | `gemini_search` báo `quota_exceeded`, "Hạn mức = 0" | Key ở tầng miễn phí không có grounding: xem mục 4, hoặc để Claude tự chuyển sang dự phòng |
+| `quota_exceeded`, "Hết số dư trả trước" | Nạp thêm trong AI Studio > Billing, hoặc để Claude chuyển sang kênh dự phòng |
 | `unavailable`, model không tồn tại (404) | Model đã đổi tên hoặc ngừng: `uv run python -m tools.doctor --probe` rồi sửa `GEMINI_*_MODELS` trong `.env` |
 | Codex báo `auth_error` | `codex login`. Adapter kiểm tra đăng nhập trước khi chạy, vì chưa đăng nhập thì `codex exec` treo ở "Reconnecting..." |
 | `agy_search` báo không in ra gì (#76) trên Windows | Cập nhật agy (bản 1.2.11 được báo là đã sửa). Hoặc dùng gói cộng đồng [agy-headless-bridge](https://github.com/rhishi99/agy-headless-bridge) như một MCP server riêng; đây là dự án cộng đồng, nên đọc mã trước khi cài |

@@ -54,8 +54,9 @@ NO_KEY_HINT = (
 )
 QUOTA_HINT = (
     "Gemini 3 trở lên không có Google Search grounding ở tầng miễn phí. Cách xử lý: "
-    "(1) bật billing cho project AI Studio bằng credit của gói Google AI Pro (README, mục 4), "
-    "(2) dùng kênh dự phòng agy_search, (3) cuối cùng mới dùng WebSearch của Claude."
+    "(1) bật billing trả trước (Prepay) trong AI Studio, kích hoạt credit hằng tháng của gói "
+    "Google AI Pro (README mục 4), (2) dùng kênh dự phòng agy_search, (3) cuối cùng mới dùng "
+    "WebSearch của Claude."
 )
 
 _QUOTES_BLOCK_RE = re.compile(r"```(?:json)?\s*(\{.*?\"quotes\".*?\})\s*```", re.DOTALL)

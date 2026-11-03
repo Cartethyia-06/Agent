@@ -199,7 +199,7 @@ google-genai 2.34.0, chạy thử Codex CLI 0.166.0 và tra tài liệu. Kết q
 | Search grounding miễn phí khoảng 500 lượt/ngày | Đó là hạn mức của Gemini 2.5 Flash, đã tắt 16/10/2026. Gemini 3 trở lên: không có grounding ở tầng miễn phí; tầng trả phí có 5.000 lượt/tháng không mất tiền | Adapter thử nhiều model, báo lỗi rõ, dự phòng `agy_search` rồi WebSearch của Claude |
 | Tạo ảnh Gemini có hạn mức miễn phí | Trang giá 10/2026: tầng miễn phí không có | Dự phòng bán thủ công qua Gemini app (gói AI Pro) trước, ChatGPT web sau |
 | `agy -p` treo khi không có terminal | Vẫn còn (#318), thêm lỗi không in output (#76) | Đóng stdin, chạy trong pseudo-terminal, có giới hạn thời gian, dừng cả cây tiến trình |
-| Chưa biết | Gói Google AI Pro có quyền lợi Google Developer Program kèm credit Google Cloud hằng tháng dùng được cho Gemini API | README mục 4: bật billing bằng credit, đặt budget alert, giới hạn lượt/ngày trong `.env` |
+| Chưa biết | Gói Google AI Pro có 10 USD credit/tháng (Google Developer Program) dùng được cho Gemini API. Billing Gemini API trong AI Studio đã chuyển sang trả trước (Prepay); credit chỉ kích hoạt sau khi nạp trả trước | README mục 4: nạp mức tối thiểu, tắt tự nạp, giới hạn lượt/ngày trong `.env` |
 
 Thêm so với kế hoạch:
 

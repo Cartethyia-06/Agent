@@ -27,8 +27,9 @@ IMAGE_SIZES = {"1K", "2K", "4K"}
 EXTENSIONS = {"image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp"}
 
 QUOTA_HINT = (
-    "Tạo ảnh qua Gemini API cần bật billing (có thể dùng credit của gói Google AI Pro, README "
-    "mục 4). Hoặc dùng image_handoff: người dùng dán prompt vào Gemini app / ChatGPT web."
+    "Tạo ảnh qua Gemini API cần billing trả trước (Prepay) trong AI Studio, có thể dùng credit "
+    "của gói Google AI Pro (README mục 4). Hoặc dùng image_handoff: người dùng dán prompt vào "
+    "Gemini app / ChatGPT web."
 )
 
 

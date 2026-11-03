@@ -54,6 +54,15 @@ def test_classify_gemini_error(error, status) -> None:
     assert c.classify_gemini_error(error)[0] == status
 
 
+def test_depleted_prepay_balance_has_its_own_message() -> None:
+    depleted = errors.ClientError(
+        429, {"error": {"status": "RESOURCE_EXHAUSTED", "message": "Your prepayment credits are depleted."}}
+    )
+    status, message = c.classify_gemini_error(depleted)
+    assert status == c.QUOTA
+    assert "trả trước" in message and "Billing" in message
+
+
 def test_reserve_daily_counts_and_resets(isolated_env, monkeypatch) -> None:
     assert c.reserve_daily("x", 2) == (True, 1)
     assert c.reserve_daily("x", 2) == (True, 2)
